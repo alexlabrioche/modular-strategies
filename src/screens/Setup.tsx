@@ -1,103 +1,76 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { X, Timer } from "lucide-react";
+import { X, Timer, Plus } from "lucide-react";
 import { INTERVAL_OPTIONS, MAX_PLAYERS, MIN_PLAYERS } from "@/constants/game";
-import { Player } from "@/types/game";
+import useGameStore from "@/hooks/useGameStore";
 
-interface SetupProps {
-  players: Player[];
-  updatePlayerName: (id: number, name: string) => void;
-  removePlayer: (id: number) => void;
-  startGame: () => void;
-  addPlayer: () => void;
-  drawInterval: number;
-  setDrawInterval: (interval: number) => void;
-}
+export const Setup: React.FC = () => {
+  const {
+    players,
+    updatePlayerName,
+    removePlayer,
+    startGame,
+    addPlayer,
+    drawInterval,
+    setDrawInterval,
+  } = useGameStore();
 
-export const Setup: React.FC<SetupProps> = ({
-  players,
-  updatePlayerName,
-  removePlayer,
-  startGame,
-  addPlayer,
-  drawInterval,
-  setDrawInterval,
-}) => (
-  <div className="w-full max-w-2xl mx-auto p-4 space-y-4 bg-gray-950">
-    <Card className="border-gray-800 bg-gray-900">
-      <CardHeader>
-        <CardTitle className="text-gray-100">
-          Configuration des Joueurs
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Draw Interval Selection */}
-        <div className="space-y-2">
-          <label className="text-sm text-gray-400 flex items-center gap-2">
-            <Timer className="w-4 h-4" />
-            Intervalle de tirage
-          </label>
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-            {INTERVAL_OPTIONS.map((option) => (
-              <Button
-                key={option.value}
-                variant={drawInterval === option.value ? "default" : "outline"}
-                size="sm"
-                onClick={() => setDrawInterval(option.value)}
-                className={`${
-                  drawInterval === option.value
-                    ? "bg-gray-700 text-gray-100"
-                    : "border-gray-700 text-gray-300 hover:bg-gray-800"
-                }`}
-              >
-                {option.label}
-              </Button>
-            ))}
-          </div>
-        </div>
+  return (
+    <div className="container">
+      <h1 className="text-2xl font-semibold mb-4">Configuration des Joueurs</h1>
+      <label className="text-sm text-neutral-400 flex items-center gap-2 mb-4">
+        <Timer className="w-4 h-4" />
+        Intervalle de tirage
+      </label>
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 mb-4">
+        {INTERVAL_OPTIONS.map((option) => (
+          <Button
+            key={option.value}
+            size="sm"
+            onClick={() => setDrawInterval(option.value)}
+            className={`${
+              drawInterval === option.value
+                ? "bg-neutral-700 text-neutral-100"
+                : "border-neutral-700 text-neutral-300 hover:bg-neutral-800"
+            }`}
+          >
+            {option.label}
+          </Button>
+        ))}
+      </div>
 
-        <div className="space-y-4">
-          {players.map((player) => (
-            <div key={player.id} className="flex items-center gap-2">
-              <input
-                type="text"
-                value={player.name}
-                onChange={(e) => updatePlayerName(player.id, e.target.value)}
-                placeholder={`Joueur ${player.id}`}
-                className="flex-1 p-2 rounded bg-gray-800 border-gray-700 text-gray-100"
-              />
-              {players.length > MIN_PLAYERS && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => removePlayer(player.id)}
-                  className="text-gray-400 hover:text-gray-100"
-                >
-                  <X className="w-4 h-4" />
-                </Button>
-              )}
-            </div>
-          ))}
-
-          {players.length < MAX_PLAYERS && (
+      {players.map((player) => (
+        <div key={player.id} className="flex items-center gap-2 mb-2">
+          <input
+            type="text"
+            value={player.name}
+            onChange={(e) => updatePlayerName(player.id, e.target.value)}
+            placeholder="Ajouter un joueur"
+            className="flex-1 p-2 rounded bg-neutral-800 border-neutral-700 text-neutral-100"
+          />
+          {players.length > MIN_PLAYERS && (
             <Button
-              variant="outline"
-              onClick={addPlayer}
-              className="w-full border-gray-700 text-gray-300 hover:bg-gray-800"
+              variant="ghost"
+              size="sm"
+              onClick={() => removePlayer(player.id)}
             >
-              Ajouter un joueur
+              <X className="w-4 h-4" />
             </Button>
           )}
         </div>
-
-        <Button
-          onClick={startGame}
-          disabled={players.some((player) => !player.name.trim())}
-          className="w-full bg-gray-700 hover:bg-gray-600 text-gray-100"
-        >
-          Commencer
+      ))}
+      {players.length < MAX_PLAYERS && (
+        <Button variant="ghost" className="w-full mb-4" onClick={addPlayer}>
+          Ajouter un joueur
+          <Plus className="w-4 h-4" />
         </Button>
-      </CardContent>
-    </Card>
-  </div>
-);
+      )}
+      <Button
+        onClick={startGame}
+        disabled={players.some((player) => !player.name.trim())}
+        className="w-full bg-green-700 hover:bg-green-600 text-green-100"
+      >
+        Commencer
+      </Button>
+    </div>
+  );
+};

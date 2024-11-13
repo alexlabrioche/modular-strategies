@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -11,6 +13,8 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --font-mono: "Space Mono", monospace;
 }
 
 @tailwind base;
@@ -20,4 +24,20 @@
   :root {
     --radius: 0.5rem;
   }
+}
+
+html {
+  @apply bg-neutral-900;
+}
+body {
+  @apply overscroll-none font-mono;
+}
+
+.container {
+  @apply w-full max-w-xl mx-auto p-4;
+}
+
+button,
+input {
+  @apply focus:outline-none focus:ring-2 focus:ring-neutral-600;
 }
