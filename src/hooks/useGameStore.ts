@@ -4,6 +4,7 @@ import { devtools } from "zustand/middleware";
 import { Category, GameScreen, Player } from "@/types/game";
 import { INTERVAL_OPTIONS } from "@/constants/game";
 import { strategies } from "@/assets/strategies";
+import { createBeep } from "@/utils/audio";
 
 interface GameState {
   // Base state
@@ -15,6 +16,7 @@ interface GameState {
   category: Category | null;
   isPreparationPhase: boolean;
   usedStrategies: Set<string>;
+  preparationTime: number;
   drawInterval: number;
   intervalId: number | null;
   selectedPlayers: Player[]; // Store selected players for current round
@@ -31,14 +33,13 @@ interface GameState {
   drawStrategy: () => void;
   updateTimer: () => void;
   setDrawInterval: (interval: number) => void;
+  setPreparationTime: (interval: number) => void;
   startTimer: () => void;
   pauseTimer: () => void;
   resetTimer: (newTime?: number) => void;
   selectPlayersForRound: () => void;
+  beep: () => void;
   cleanup: () => void;
-
-  // Utility
-  formatTime: (seconds: number) => string;
 }
 
 const useGameStore = create<GameState>()(
@@ -54,9 +55,11 @@ const useGameStore = create<GameState>()(
         category: null,
         isPreparationPhase: true,
         usedStrategies: new Set<string>(),
+        preparationTime: INTERVAL_OPTIONS[0].value,
         drawInterval: INTERVAL_OPTIONS[0].value,
         intervalId: null,
         selectedPlayers: [],
+        beep: createBeep(),
 
         // Actions
         setScreen: (screen) => set({ screen }),
@@ -72,6 +75,11 @@ const useGameStore = create<GameState>()(
             if (!currentState.isPlaying) return;
 
             const newTime = currentState.timer - 1;
+
+            // Play beep for last 5 seconds
+            if (newTime <= 5 && newTime > 0) {
+              currentState.beep();
+            }
 
             if (newTime <= 0) {
               get().pauseTimer();
@@ -98,10 +106,7 @@ const useGameStore = create<GameState>()(
             set({ timer: newTime });
           }, 1000);
 
-          set({
-            isPlaying: true,
-            intervalId: newIntervalId,
-          });
+          set({ isPlaying: true, intervalId: newIntervalId });
         },
 
         selectPlayersForRound: () => {
@@ -125,7 +130,7 @@ const useGameStore = create<GameState>()(
           }
 
           set({
-            timer: state.drawInterval,
+            timer: state.preparationTime,
             screen: "play",
             isPreparationPhase: true,
             usedStrategies: new Set(),
@@ -138,12 +143,6 @@ const useGameStore = create<GameState>()(
 
           get().drawStrategy();
           get().startTimer();
-        },
-
-        formatTime: (seconds) => {
-          const mins = Math.floor(seconds / 60);
-          const secs = seconds % 60;
-          return `${mins}:${secs.toString().padStart(2, "0")}`;
         },
 
         pauseTimer: () => {
@@ -181,12 +180,16 @@ const useGameStore = create<GameState>()(
           }
         },
 
-        setDrawInterval: (interval: number) => {
-          set({ drawInterval: interval });
+        setPreparationTime: (preparationTime: number) => {
+          set({ preparationTime });
+        },
+
+        setDrawInterval: (drawInterval: number) => {
+          set({ drawInterval });
           // If game is in progress, reset timer with new interval
           const state = get();
           if (state.isPlaying) {
-            state.resetTimer(interval);
+            state.resetTimer(drawInterval);
             state.startTimer();
           }
         },
@@ -267,9 +270,7 @@ const useGameStore = create<GameState>()(
 
           if (newTimer < 0) {
             if (state.isPreparationPhase) {
-              set({
-                isPreparationPhase: false,
-              });
+              set({ isPreparationPhase: false });
               state.resetTimer(state.drawInterval);
               state.startTimer();
               return;
@@ -290,6 +291,7 @@ const useGameStore = create<GameState>()(
           players: state.players,
           usedStrategies: Array.from(state.usedStrategies),
           drawInterval: state.drawInterval,
+          preparationTime: state.preparationTime,
         }),
       }
     )

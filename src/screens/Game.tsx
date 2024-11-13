@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Dices, RefreshCcw } from "lucide-react";
 import useGameStore from "@/hooks/useGameStore";
+import { formatTime } from "@/utils/formatTime";
 
 const categoryNames = {
   philosophical: "Philosophique",
@@ -11,11 +12,11 @@ const categoryNames = {
 };
 
 const categoryColors = {
-  philosophical: "bg-blue-950",
-  soundscape: "bg-green-950",
-  compositional: "bg-purple-950",
-  experimental: "bg-orange-950",
-  performance: "bg-pink-950",
+  philosophical: "from-blue-900 to-blue-950",
+  soundscape: "from-green-900 to-green-950",
+  compositional: "from-purple-900 to-purple-950",
+  experimental: "from-orange-900 to-orange-950",
+  performance: "from-pink-900 to-pink-950",
 };
 
 export const Game: React.FC = () => {
@@ -26,7 +27,6 @@ export const Game: React.FC = () => {
     resetGame,
     currentStrategy,
     category,
-    formatTime,
     selectedPlayers,
     players,
   } = useGameStore();
@@ -41,7 +41,7 @@ export const Game: React.FC = () => {
 
       {currentStrategy && category && (
         <div
-          className={`p-2 rounded-3xl rounded-b-none ${categoryColors[category]}`}
+          className={`container rounded-3xl rounded-b-none bg-gradient-to-br ${categoryColors[category]}`}
           key={`${category}-${currentStrategy}`}
         >
           <div className="text-4xl font-medium text-center text-neutral-100 py-28">
