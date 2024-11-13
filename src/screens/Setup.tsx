@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { X, Timer, Plus } from "lucide-react";
+import { X, Timer, Plus, Pyramid, TimerReset } from "lucide-react";
 import { INTERVAL_OPTIONS, MAX_PLAYERS, MIN_PLAYERS } from "@/constants/game";
 import useGameStore from "@/hooks/useGameStore";
 
@@ -19,8 +19,9 @@ export const Setup: React.FC = () => {
   return (
     <div className="container">
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-center my-4">
-          Configuration des Joueurs
+        <h1 className="text-2xl font-semibold my-4 flex items-center">
+          <Pyramid className="w-6 h-6 mr-4" />
+          Modular Strategies
         </h1>
         <label className="text-sm text-neutral-400 flex items-center gap-2 mb-2">
           <Timer className="w-4 h-4" />
@@ -31,11 +32,12 @@ export const Setup: React.FC = () => {
             <Button
               key={option.value}
               size="sm"
+              variant="ghost"
               onClick={() => setPreparationTime(option.value)}
               className={`${
                 preparationTime === option.value
-                  ? "bg-neutral-700 text-neutral-100"
-                  : "border-neutral-700 text-neutral-300 hover:bg-neutral-800"
+                  ? "bg-green-900 text-neutral-100"
+                  : "bg-transparent text-neutral-300"
               }`}
             >
               {option.label}
@@ -43,7 +45,7 @@ export const Setup: React.FC = () => {
           ))}
         </div>
         <label className="text-sm text-neutral-400 flex items-center gap-2 mb-2">
-          <Timer className="w-4 h-4" />
+          <TimerReset className="w-4 h-4" />
           Intervalle de tirage
         </label>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 mb-2">
@@ -51,11 +53,12 @@ export const Setup: React.FC = () => {
             <Button
               key={option.value}
               size="sm"
+              variant="ghost"
               onClick={() => setDrawInterval(option.value)}
               className={`${
                 drawInterval === option.value
-                  ? "bg-neutral-700 text-neutral-100"
-                  : "border-neutral-700 text-neutral-300 hover:bg-neutral-800"
+                  ? "bg-green-900 text-neutral-100"
+                  : "bg-transparent text-neutral-300"
               }`}
             >
               {option.label}

@@ -29,57 +29,88 @@ export const Game: React.FC = () => {
     category,
     selectedPlayers,
     players,
+    usedStrategies,
   } = useGameStore();
 
-  return (
-    <div className="h-screen flex flex-col justify-between">
-      <div className="container">
-        <h1 className="text-8xl text-neutral-100 text-center font-black font-mono pt-24">
-          {formatTime(timer)}
-        </h1>
-      </div>
+  const last = Array.from(usedStrategies)
+    .slice(-6, -1)
+    .map((strategyKey) => {
+      const [category, strategy] = strategyKey.split("___");
+      return { category, strategy };
+    });
 
+  return (
+    <div className="h-dvh relative flex flex-col justify-between">
+      <div className="h-full flex flex-col justify-between">
+        <div className=" container grid place-items-center">
+          <h1 className="pt-4 text-8xl text-neutral-100 text-center font-black font-mono">
+            {formatTime(timer)}
+          </h1>
+        </div>
+      </div>
       {currentStrategy && category && (
-        <div
-          className={`container rounded-3xl rounded-b-none bg-gradient-to-br ${categoryColors[category]}`}
-          key={`${category}-${currentStrategy}`}
-        >
-          <div className="text-4xl font-medium text-center text-neutral-100 py-28">
-            {currentStrategy}
+        <div className="absolute bottom-0 left-0 right-0">
+          <div className="container space-y-1 pb-4">
+            {last.map((item, index) => (
+              <div
+                key={`${item.category}-${item.strategy}`}
+                className={`text-sm truncate whitespace-nowrap overflow-hidden ${
+                  index === 0
+                    ? "opacity-20"
+                    : index === 1
+                    ? "opacity-30"
+                    : index === 2
+                    ? "opacity-40"
+                    : index === 3
+                    ? "opacity-50"
+                    : "opacity-60"
+                }`}
+              >
+                {item.strategy}
+              </div>
+            ))}
           </div>
-          {category && (
-            <div className="text-sm text-neutral-400">
-              {categoryNames[category]}
+          <div
+            className={`container rounded-3xl rounded-b-none bg-gradient-to-br ${categoryColors[category]}`}
+            key={`${category}-${currentStrategy}`}
+          >
+            <div className="text-4xl font-medium text-center text-neutral-100 h-72 flex items-center justify-center leading-normal">
+              {currentStrategy}
             </div>
-          )}
-          {category && (
-            <div className="text-3xl text-neutral-300 font-semibold mb-8">
-              {isPreparationPhase
-                ? "Tous les joueurs"
-                : selectedPlayers.length === players.length
-                ? "Tous les joueurs"
-                : selectedPlayers.map((player) => player.name).join(", ")}
+            {category && (
+              <div className="text-sm text-neutral-400">
+                {categoryNames[category]}
+              </div>
+            )}
+            {category && (
+              <div className="text-3xl text-neutral-300 font-semibold pb-4">
+                {isPreparationPhase
+                  ? "Tous les joueurs"
+                  : selectedPlayers.length === players.length
+                  ? "Tous les joueurs"
+                  : selectedPlayers.map((player) => player.name).join(", ")}
+              </div>
+            )}
+            <div className="flex gap-2 justify-between pb-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-neutral-400"
+                onClick={drawStrategy}
+              >
+                <RefreshCcw className="w-4 h-4 mr-2" />
+                Nouveau tirage
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-neutral-400"
+                onClick={resetGame}
+              >
+                Nouvelle Partie
+                <Dices className="w-4 h-4 mr-2" />
+              </Button>
             </div>
-          )}
-          <div className="flex gap-2 justify-between">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-neutral-400"
-              onClick={drawStrategy}
-            >
-              <RefreshCcw className="w-4 h-4 mr-2" />
-              Nouveau tirage
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-neutral-400"
-              onClick={resetGame}
-            >
-              Nouvelle Partie
-              <Dices className="w-4 h-4 mr-2" />
-            </Button>
           </div>
         </div>
       )}

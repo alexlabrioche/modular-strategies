@@ -241,7 +241,7 @@ const useGameStore = create<GameState>()(
             )
             .filter(
               (item) =>
-                !state.usedStrategies.has(`${item.category}-${item.strategy}`)
+                !state.usedStrategies.has(`${item.category}___${item.strategy}`)
             );
 
           if (availableStrategies.length === 0) {
@@ -257,7 +257,7 @@ const useGameStore = create<GameState>()(
 
           set((state) => ({
             usedStrategies: new Set(state.usedStrategies).add(
-              `${chosen.category}-${chosen.strategy}`
+              `${chosen.category}___${chosen.strategy}`
             ),
             currentStrategy: chosen.strategy,
             category: chosen.category,

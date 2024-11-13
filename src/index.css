@@ -12,7 +12,7 @@
 
   --font-mono: "Space Mono", monospace;
 
-  @apply bg-neutral-900 text-neutral-100;
+  @apply bg-neutral-900 text-neutral-100 select-none;
 }
 
 @tailwind base;
@@ -29,7 +29,7 @@ body {
 }
 
 .container {
-  @apply w-full max-w-xl mx-auto p-4;
+  @apply w-full max-w-xl mx-auto px-4;
 }
 
 button,
